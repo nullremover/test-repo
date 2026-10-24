@@ -11,15 +11,15 @@ struct LyricsView: View {
     // MARK: - Colors (precomputed so body stays simple)
 
     private var primaryColor: Color {
-        specialMode ? Color.black : Color.white
+        Color.white
     }
 
     private var inactiveLineColor: Color {
-        specialMode ? Color.black.opacity(0.48) : Color.white.opacity(0.48)
+        Color.white.opacity(0.55)
     }
 
     private var activeLineBackground: Color {
-        specialMode ? Color.black.opacity(0.08) : Color.white.opacity(0.12)
+        specialMode ? Color.black.opacity(0.45) : Color.white.opacity(0.15)
     }
 
     private var dimColor: Color {
@@ -124,25 +124,27 @@ struct LyricsView: View {
     }
 
     private func lyricLine(text: String, isActive: Bool) -> some View {
-        let fontSize: CGFloat = isActive ? 21 : 18
-        let fontWeight: Font.Weight = isActive ? .bold : .medium
-        let textColor: Color = isActive ? primaryColor : inactiveLineColor
-        let displayText: String = text.isEmpty ? "♪" : text
+    let fontSize: CGFloat = isActive ? 21 : 18
+    let fontWeight: Font.Weight = isActive ? .bold : .medium
+    let textColor: Color = isActive ? primaryColor : inactiveLineColor
+    let displayText: String = text.isEmpty ? "♪" : text
 
-        return Text(displayText)
-            .font(.system(size: fontSize, weight: fontWeight))
-            .foregroundStyle(textColor)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 10)
-            .background {
-                if isActive {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(activeLineBackground)
-                }
+    return Text(displayText)
+        .font(.system(size: fontSize, weight: fontWeight))
+        .foregroundStyle(textColor)
+        .shadow(color: .black.opacity(0.8), radius: 2, x: 0, y: 1) // 👈 ADD THIS SHADOW!
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background {
+            if isActive {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(activeLineBackground)
             }
-            .scaleEffect(isActive ? 1.01 : 1.0, anchor: .leading)
-    }
+        }
+        .scaleEffect(isActive ? 1.01 : 1.0, anchor: .leading)
+}
+
 
     // Plain lyrics fallback: no timestamps to synchronize.
     private func plainLyrics(_ lyrics: String) -> some View {
