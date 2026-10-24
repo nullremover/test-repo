@@ -1031,71 +1031,77 @@ struct NowPlayingView: View {
     }
     
     
-    private var lyricsPreview: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("LYRICS")
-                    .font(.system(size: 10, weight: .heavy))
-                    .tracking(2)
+   private var lyricsPreview: some View {
+    VStack(alignment: .leading, spacing: 12) {
+        HStack {
+            Text("LYRICS")
+                .font(.system(size: 10, weight: .heavy))
+                .tracking(2)
+                .foregroundStyle(.white.opacity(0.85)) // 👈 Explicit white style!
     
-                Spacer()
+            Spacer()
     
-                Button(action: onShowLyrics) {
-                    Label(
-                        "View all",
-                        systemImage: "arrow.up.right"
-                    )
-                    .font(.system(size: 11, weight: .medium))
-                }
-                .buttonStyle(.plain)
-            }
-    
-            if let lyrics = lyricsModel.lyrics {
-                Text(lyrics)
-                    .font(.system(size: 14, weight: .medium))
-                    .lineSpacing(5)
-                    .lineLimit(4)
-                    .frame(
-                        maxWidth: .infinity,
-                        alignment: .leading
-                    )
-            } else if lyricsModel.isLoading {
-                ProgressView("Finding lyrics…")
-                    .font(.system(size: 12))
-            } else {
-                Text(
-                    lyricsModel.errorMessage
-                        ?? "Lyrics will appear here."
+            Button(action: onShowLyrics) {
+                Label(
+                    "View all",
+                    systemImage: "arrow.up.right"
                 )
+                .font(.system(size: 11, weight: .medium))
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.white) // 👈 Make button crisp white
+        }
+    
+        if let lyrics = lyricsModel.lyrics {
+            Text(lyrics)
+                .font(.system(size: 14, weight: .medium))
+                .lineSpacing(5)
+                .lineLimit(4)
+                .foregroundStyle(.white) // 👈 Force text bright white
+                .shadow(color: .black.opacity(0.8), radius: 2, x: 0, y: 1) // 👈 Crisp drop shadow!
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .leading
+                )
+        } else if lyricsModel.isLoading {
+            ProgressView("Finding lyrics…")
                 .font(.system(size: 12))
-                .foregroundStyle(.secondary)
-            }
+                .foregroundStyle(.white.opacity(0.8))
+        } else {
+            Text(
+                lyricsModel.errorMessage
+                    ?? "Lyrics will appear here."
+            )
+            .font(.system(size: 12))
+            .foregroundStyle(.white.opacity(0.6))
         }
-        .padding(15)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        
-        .background {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(.ultraThinMaterial)
-                .environment(\.colorScheme, .dark)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            .white.opacity(0.42),
-                            .white.opacity(0.08),
-                            .white.opacity(0.20)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
-        }
-        .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
     }
+    .padding(15)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    
+    // 👇 FIXED BACKGROUND: Adds a dark tint layer beneath the material so art stops bleeding through!
+    .background {
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(Color.black.opacity(0.68)) // Dark opaque tint layer
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+    }
+    .overlay {
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .strokeBorder(
+                LinearGradient(
+                    colors: [
+                        .white.opacity(0.42),
+                        .white.opacity(0.08),
+                        .white.opacity(0.20)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: 1
+            )
+    }
+    .shadow(color: .black.opacity(0.3), radius: 10, y: 5)
+}
     
     private var seekBar: some View {
         VStack(spacing: 7) {
